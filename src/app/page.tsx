@@ -28,7 +28,6 @@ export default function Home() {
 
 	const handleDocumentsUpload = (files: File[]) => {
 		setDocuments(files);
-		console.log("Uploaded documents:", files);
 	};
 
 	const handleQuerySubmit = async (query: string) => {
