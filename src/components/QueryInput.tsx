@@ -28,7 +28,7 @@ export default function QueryInput({
 	return (
 		<Card className="w-full max-w-md">
 			<CardHeader>
-				<CardTitle>Query KnowledgeBase</CardTitle>
+				<CardTitle>Query</CardTitle>
 			</CardHeader>
 			<CardContent>
 				<form onSubmit={handleSubmit} className="grid gap-4">

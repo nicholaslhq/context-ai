@@ -88,7 +88,7 @@ export default function Home() {
 			<Card className="w-full max-w-4xl mb-8">
 				<CardHeader className="text-center">
 					<CardTitle className="text-4xl font-bold">
-						Welcome to Gemini KnowledgeBase
+						Welcome to Context AI
 					</CardTitle>
 					<CardDescription className="text-lg text-muted-foreground mt-2">
 						Upload your documents (HTML, PDF, TXT), input your
@@ -118,7 +118,7 @@ export default function Home() {
 			{apiKey && documents.length > 0 && (
 				<Card className="w-full max-w-4xl mb-8">
 					<CardHeader>
-						<CardTitle>Query KnowledgeBase</CardTitle>
+						<CardTitle>Query</CardTitle>
 					</CardHeader>
 					<CardContent>
 						<QueryInput
