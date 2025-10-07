@@ -15,6 +15,13 @@ import {
 	SelectTrigger,
 	SelectValue,
 } from "@/components/ui/select";
+import { Button } from "./ui/button";
+import { CheckCircle2, AlertCircle, Save, Trash2 } from "lucide-react";
+import {
+	saveToLocalStorage,
+	loadFromLocalStorage,
+	removeFromLocalStorage,
+} from "@/utils/localStorage";
 
 interface ModelSelectorProps {
 	models: GeminiModel[];
@@ -28,9 +35,11 @@ export default function ModelSelector({
 	selectedModel,
 }: ModelSelectorProps) {
 	const [noModelsError, setNoModelsError] = useState(false);
+	const [isModelSaved, setIsModelSaved] = useState(false);
 
 	const handleValueChange = (value: string) => {
 		onSelectModel(value);
+		setIsModelSaved(false); // Indicate unsaved changes
 	};
 
 	const defaultModelName = "models/gemini-flash-latest";
@@ -49,65 +58,54 @@ export default function ModelSelector({
 		return b.name.localeCompare(a.name); // Fallback to alphabetical for consistent order
 	});
 
-	// Determine the effective selected model
-	let effectiveSelectedModel = selectedModel;
-
-	// If no model is selected, try to set a default
-	if (!effectiveSelectedModel && sortedModels.length > 0) {
-		const geminiFlashLatest = sortedModels.find(
-			(model) => model.name === defaultModelName
-		);
-
-		if (geminiFlashLatest) {
-			effectiveSelectedModel = geminiFlashLatest.name;
-		} else {
-			// If 'gemini-flash-latest' is not available, select the first model
-			effectiveSelectedModel = sortedModels[0].name;
-		}
-	} else if (
-		effectiveSelectedModel &&
-		!sortedModels.some((model) => model.name === effectiveSelectedModel)
-	) {
-		// If the currently selected model is no longer available, default to gemini-flash-latest or the first available
-		const geminiFlashLatest = sortedModels.find(
-			(model) => model.name === defaultModelName
-		);
-		if (geminiFlashLatest) {
-			effectiveSelectedModel = geminiFlashLatest.name;
-		} else if (sortedModels.length > 0) {
-			effectiveSelectedModel = sortedModels[0].name;
-		} else {
-			effectiveSelectedModel = null; // No models available
-		}
-		if (effectiveSelectedModel) {
-			onSelectModel(effectiveSelectedModel);
-		}
-	}
 	useEffect(() => {
-		if (
-			effectiveSelectedModel &&
-			!sortedModels.some((model) => model.name === effectiveSelectedModel)
-		) {
-			// If the currently selected model is no longer available, default to gemini-flash-latest or the first available
-			const geminiFlashLatest = sortedModels.find(
-				(model) => model.name === defaultModelName
-			);
-			if (geminiFlashLatest) {
-				onSelectModel(geminiFlashLatest.name);
+		// Only attempt to set an initial model if no model is currently selected
+		if (!selectedModel) {
+			const storedModel = loadFromLocalStorage("geminiSelectedModel");
+			if (
+				storedModel &&
+				models.some((model) => model.name === storedModel)
+			) {
+				onSelectModel(storedModel);
+				setIsModelSaved(true);
 			} else if (sortedModels.length > 0) {
-				onSelectModel(sortedModels[0].name);
-			} else {
-				// No models available, or no suitable default
-				setNoModelsError(true);
+				// If no stored model or stored model is invalid, set a default
+				const geminiFlashLatest = sortedModels.find(
+					(model) => model.name === defaultModelName
+				);
+				if (geminiFlashLatest) {
+					onSelectModel(geminiFlashLatest.name);
+				} else {
+					// Ensure sortedModels is not empty before accessing
+					onSelectModel(sortedModels[0].name); // Access first element of array
+				}
 			}
+		}
+	}, [models, onSelectModel, sortedModels, selectedModel]);
+
+	useEffect(() => {
+		if (!selectedModel && sortedModels.length === 0) {
+			setNoModelsError(true);
 		} else {
 			setNoModelsError(false);
-			if (effectiveSelectedModel && selectedModel === null) {
-				// Only call onSelectModel if a default was programmatically chosen and no model was previously selected
-				onSelectModel(effectiveSelectedModel);
-			}
 		}
-	}, [effectiveSelectedModel, onSelectModel, sortedModels, selectedModel]);
+		setIsModelSaved(
+			loadFromLocalStorage("geminiSelectedModel") === selectedModel
+		);
+	}, [selectedModel, sortedModels]); // Re-evaluate when selectedModel or sortedModels changes
+
+	const handleSaveModel = () => {
+		if (selectedModel) {
+			saveToLocalStorage("geminiSelectedModel", selectedModel);
+			setIsModelSaved(true);
+		}
+	};
+
+	const handleClearModel = () => {
+		removeFromLocalStorage("geminiSelectedModel");
+		setIsModelSaved(false);
+		onSelectModel(""); // Clear the selected model in the parent component
+	};
 
 	return (
 		<Card className="w-full max-w-md">
@@ -115,6 +113,7 @@ export default function ModelSelector({
 				<CardTitle>Select Gemini Model</CardTitle>
 				<CardDescription>
 					Choose the Gemini model you&apos;d like to use for querying.
+					It can be saved locally.
 				</CardDescription>
 			</CardHeader>
 			<CardContent>
@@ -126,27 +125,65 @@ export default function ModelSelector({
 							network connection.
 						</CardDescription>
 					) : (
-						<Select
-							onValueChange={handleValueChange}
-							value={effectiveSelectedModel || ""}
-						>
-							<SelectTrigger
-								id="model-selector"
-								className="w-full"
+						<>
+							<Select
+								onValueChange={handleValueChange}
+								value={selectedModel || ""}
 							>
-								<SelectValue placeholder="Select a model" />
-							</SelectTrigger>
-							<SelectContent>
-								{sortedModels.map((model) => (
-									<SelectItem
-										key={model.name}
-										value={model.name}
+								<SelectTrigger
+									id="model-selector"
+									className="w-full"
+								>
+									<SelectValue placeholder="Select a model" />
+								</SelectTrigger>
+								<SelectContent>
+									{sortedModels.map((model) => (
+										<SelectItem
+											key={model.name}
+											value={model.name}
+										>
+											{model.displayName || model.name}
+										</SelectItem>
+									))}
+								</SelectContent>
+							</Select>
+							<div className="flex items-center justify-between text-sm text-muted-foreground mt-2">
+								{isModelSaved ? (
+									<span className="flex items-center text-green-600">
+										<CheckCircle2 className="h-4 w-4 mr-1" />{" "}
+										Model Saved
+									</span>
+								) : (
+									<span className="flex items-center text-yellow-600">
+										<AlertCircle className="h-4 w-4 mr-1" />{" "}
+										Model Not Saved
+									</span>
+								)}
+								<div className="flex gap-2">
+									<Button
+										variant="outline"
+										size="sm"
+										onClick={handleSaveModel}
+										disabled={
+											!selectedModel || isModelSaved
+										}
 									>
-										{model.displayName || model.name}
-									</SelectItem>
-								))}
-							</SelectContent>
-						</Select>
+										<Save className="h-4 w-4 mr-1" /> Save
+									</Button>
+									<Button
+										variant="outline"
+										size="sm"
+										onClick={handleClearModel}
+										disabled={
+											!selectedModel && !isModelSaved
+										}
+									>
+										<Trash2 className="h-4 w-4 mr-1" />{" "}
+										Clear
+									</Button>
+								</div>
+							</div>
+						</>
 					)}
 				</div>
 			</CardContent>

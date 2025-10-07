@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import ApiKeyInput from "../components/ApiKeyInput";
 import DocumentUpload from "../components/DocumentUpload";
 import QueryInput from "../components/QueryInput";
@@ -18,6 +18,7 @@ import {
 	CardTitle,
 } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
+import { loadFromLocalStorage } from "@/utils/localStorage";
 
 export default function Home() {
 	const [apiKey, setApiKey] = useState<string | null>(null);
@@ -25,6 +26,17 @@ export default function Home() {
 	const [queryResults, setQueryResults] = useState<string | null>(null);
 	const [availableModels, setAvailableModels] = useState<GeminiModel[]>([]);
 	const [selectedModel, setSelectedModel] = useState<string | null>(null);
+
+	useEffect(() => {
+		const storedApiKey = loadFromLocalStorage("geminiApiKey");
+		if (storedApiKey) {
+			setApiKey(storedApiKey);
+		}
+		const storedModel = loadFromLocalStorage("geminiSelectedModel");
+		if (storedModel) {
+			setSelectedModel(storedModel);
+		}
+	}, []);
 
 	const handleDocumentsUpload = (files: File[]) => {
 		setDocuments(files);
