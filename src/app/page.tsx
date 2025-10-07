@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import ApiKeyInput from "../components/ApiKeyInput";
 import DocumentUpload from "../components/DocumentUpload";
 import QueryInput from "../components/QueryInput";
+import ChatHistory from "../components/ChatHistory"; // Import ChatHistory
 import { GoogleGenerativeAI } from "@google/generative-ai";
 import { parseDocument } from "../utils/documentParser";
 import ReactMarkdown from "react-markdown";
@@ -14,6 +15,7 @@ import {
 	Card,
 	CardContent,
 	CardDescription,
+	CardFooter,
 	CardHeader,
 	CardTitle,
 } from "@/components/ui/card";
@@ -23,9 +25,25 @@ import { loadFromLocalStorage } from "@/utils/localStorage";
 export default function Home() {
 	const [apiKey, setApiKey] = useState<string | null>(null);
 	const [documents, setDocuments] = useState<File[]>([]);
-	const [queryResults, setQueryResults] = useState<string | null>(null);
+	const [messages, setMessages] = useState<
+		{
+			id: string;
+			text: string;
+			sender: "user" | "ai";
+			timestamp: string;
+			loading?: boolean;
+		}[]
+	>([
+		{
+			id: "welcome",
+			text: "Hello! Upload your documents and I'll help you query them. How can I assist you today?",
+			sender: "ai",
+			timestamp: new Date().toLocaleTimeString(),
+		},
+	]);
 	const [availableModels, setAvailableModels] = useState<GeminiModel[]>([]);
 	const [selectedModel, setSelectedModel] = useState<string | null>(null);
+	const [isLoading, setIsLoading] = useState<boolean>(false);
 
 	useEffect(() => {
 		const storedApiKey = loadFromLocalStorage("geminiApiKey");
@@ -52,7 +70,14 @@ export default function Home() {
 			return;
 		}
 
-		setQueryResults("Processing your query...");
+		const newUserMessage = {
+			id: Date.now().toString(),
+			text: query,
+			sender: "user" as const,
+			timestamp: new Date().toLocaleTimeString(),
+		};
+		setMessages((prevMessages) => [...prevMessages, newUserMessage]);
+		setIsLoading(true);
 
 		try {
 			const genAI = new GoogleGenerativeAI(apiKey);
@@ -74,13 +99,30 @@ export default function Home() {
 			const result = await model.generateContent(prompt);
 			const response = await result.response;
 			const text = response.text();
-			setQueryResults(text);
+
+			const newAiMessage = {
+				id: Date.now().toString() + "-ai",
+				text: text,
+				sender: "ai" as const,
+				timestamp: new Date().toLocaleTimeString(),
+			};
+			setMessages((prevMessages) => [...prevMessages, newAiMessage]);
 		} catch (error) {
 			console.error("Error querying Gemini API:", error);
-			setQueryResults(
-				"Error: Unable to get a response from Gemini API. Please check your API key and try again."
-			);
+			const errorMessage = {
+				id: Date.now().toString() + "-error",
+				text: "Error: Unable to get a response from Gemini API. Please check your API key and try again.",
+				sender: "ai" as const,
+				timestamp: new Date().toLocaleTimeString(),
+			};
+			setMessages((prevMessages) => [...prevMessages, errorMessage]);
+		} finally {
+			setIsLoading(false);
 		}
+	};
+
+	const handleClearChat = () => {
+		setMessages([]);
 	};
 
 	return (
@@ -116,29 +158,33 @@ export default function Home() {
 			)}
 
 			{apiKey && documents.length > 0 && (
-				<Card className="w-full max-w-4xl mb-8">
+				<Card className="w-full max-w-4xl mb-8 flex flex-col h-[70vh]">
 					<CardHeader>
-						<CardTitle>Query</CardTitle>
+						<CardTitle>Query Interface</CardTitle>
 					</CardHeader>
-					<CardContent>
-						<QueryInput
-							onQuerySubmit={handleQuerySubmit}
-							disabled={!apiKey || documents.length === 0}
-						/>
-						<Separator className="my-6" />
-						<h3 className="text-xl font-semibold mb-4">Results</h3>
-						{queryResults ? (
-							<div className="bg-muted p-4 rounded-md text-foreground">
-								<ReactMarkdown remarkPlugins={[remarkGfm]}>
-									{queryResults}
-								</ReactMarkdown>
-							</div>
-						) : (
-							<div className="border border-dashed border-border p-4 text-center text-muted-foreground rounded-md">
-								Query Results will be displayed here.
+					<CardContent className="flex flex-col flex-1 overflow-y-auto">
+						<ChatHistory messages={messages} />
+						{isLoading && (
+							<div className="flex justify-start mt-4">
+								<div className="bg-gray-200 text-gray-800 p-3 rounded-lg max-w-[70%]">
+									<div className="flex space-x-1">
+										<div className="h-2 w-2 bg-gray-500 rounded-full animate-bounce [animation-delay:-0.3s]"></div>
+										<div className="h-2 w-2 bg-gray-500 rounded-full animate-bounce [animation-delay:-0.15s]"></div>
+										<div className="h-2 w-2 bg-gray-500 rounded-full animate-bounce"></div>
+									</div>
+								</div>
 							</div>
 						)}
 					</CardContent>
+					<CardFooter className="sticky bottom-0 z-10 bg-background p-4">
+						<QueryInput
+							onQuerySubmit={handleQuerySubmit}
+							onClearChat={handleClearChat}
+							disabled={
+								!apiKey || documents.length === 0 || isLoading
+							}
+						/>
+					</CardFooter>
 				</Card>
 			)}
 		</div>
