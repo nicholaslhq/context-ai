@@ -108,12 +108,11 @@ export default function ModelSelector({
 	};
 
 	return (
-		<Card className="w-full max-w-md">
+		<Card className="w-full w-md max-w-md">
 			<CardHeader>
 				<CardTitle>Select Gemini Model</CardTitle>
 				<CardDescription>
 					Choose the Gemini model you&apos;d like to use for querying.
-					It can be saved locally.
 				</CardDescription>
 			</CardHeader>
 			<CardContent>
@@ -151,36 +150,39 @@ export default function ModelSelector({
 								{isModelSaved ? (
 									<span className="flex items-center text-green-600">
 										<CheckCircle2 className="h-4 w-4 mr-1" />{" "}
-										Model Saved
+										Saved
 									</span>
 								) : (
 									<span className="flex items-center text-yellow-600">
 										<AlertCircle className="h-4 w-4 mr-1" />{" "}
-										Model Not Saved
+										Not Saved
 									</span>
 								)}
 								<div className="flex gap-2">
-									<Button
-										variant="outline"
-										size="sm"
-										onClick={handleSaveModel}
-										disabled={
-											!selectedModel || isModelSaved
-										}
-									>
-										<Save className="h-4 w-4 mr-1" /> Save
-									</Button>
-									<Button
-										variant="outline"
-										size="sm"
-										onClick={handleClearModel}
-										disabled={
-											!selectedModel && !isModelSaved
-										}
-									>
-										<Trash2 className="h-4 w-4 mr-1" />{" "}
-										Clear
-									</Button>
+									{!isModelSaved && (
+										<Button
+											variant="outline"
+											size="sm"
+											onClick={handleSaveModel}
+											disabled={
+												!selectedModel || isModelSaved
+											}
+										>
+											<Save className="h-4 w-4" />
+										</Button>
+									)}
+									{isModelSaved && (
+										<Button
+											variant="outline"
+											size="sm"
+											onClick={handleClearModel}
+											disabled={
+												!selectedModel && !isModelSaved
+											}
+										>
+											<Trash2 className="h-4 w-4" />
+										</Button>
+									)}
 								</div>
 							</div>
 						</>

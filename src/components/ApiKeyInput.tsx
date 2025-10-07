@@ -114,12 +114,11 @@ export default function ApiKeyInput({
 	};
 
 	return (
-		<Card className="w-full max-w-md">
+		<Card className="w-full w-md max-w-md">
 			<CardHeader>
 				<CardTitle>Gemini API Key</CardTitle>
 				<CardDescription>
-					Please enter your Gemini API key. It can be saved locally in
-					your browser for future use.
+					Please enter your Gemini API key.
 				</CardDescription>
 			</CardHeader>
 			<CardContent>
@@ -139,9 +138,9 @@ export default function ApiKeyInput({
 								required
 								className={cn(
 									status === "invalid" &&
-										"border-red-500 focus-visible:ring-red-500",
+										"border-red-500 focus-visible:ring-red-500 pr-8",
 									status === "valid" &&
-										"border-green-500 focus-visible:ring-green-500"
+										"border-green-500 focus-visible:ring-green-500 pr-8"
 								)}
 							/>
 							<div className="absolute right-3 top-1/2 -translate-y-1/2">
@@ -152,35 +151,44 @@ export default function ApiKeyInput({
 							{isApiKeySaved ? (
 								<span className="flex items-center text-green-600">
 									<CheckCircle2 className="h-4 w-4 mr-1" />{" "}
-									API Key Saved
+									Saved
+								</span>
+							) : status == "valid" ? (
+								<span className="flex items-center text-yellow-600">
+									<AlertCircle className="h-4 w-4 mr-1" /> API
+									Not Saved
 								</span>
 							) : (
 								<span className="flex items-center text-yellow-600">
-									<AlertCircle className="h-4 w-4 mr-1" /> API
-									Key Not Saved
+									<AlertCircle className="h-4 w-4 mr-1" />
+									Missing API Key
 								</span>
 							)}
 							<div className="flex gap-2">
-								<Button
-									variant="outline"
-									size="sm"
-									onClick={handleSaveApiKey}
-									disabled={
-										!apiKey ||
-										status !== "valid" ||
-										isApiKeySaved
-									}
-								>
-									<Save className="h-4 w-4 mr-1" /> Save
-								</Button>
-								<Button
-									variant="outline"
-									size="sm"
-									onClick={handleClearApiKey}
-									disabled={!apiKey && !isApiKeySaved}
-								>
-									<Trash2 className="h-4 w-4 mr-1" /> Clear
-								</Button>
+								{!isApiKeySaved && (
+									<Button
+										variant="outline"
+										size="sm"
+										onClick={handleSaveApiKey}
+										disabled={
+											!apiKey ||
+											status !== "valid" ||
+											isApiKeySaved
+										}
+									>
+										<Save className="h-4 w-4" />
+									</Button>
+								)}
+								{isApiKeySaved && (
+									<Button
+										variant="outline"
+										size="sm"
+										onClick={handleClearApiKey}
+										disabled={!apiKey && !isApiKeySaved}
+									>
+										<Trash2 className="h-4 w-4" />
+									</Button>
+								)}
 							</div>
 						</div>
 					</div>

@@ -35,8 +35,20 @@ export default function Home() {
 		}[]
 	>([
 		{
-			id: "welcome",
-			text: "Hello! Upload your documents and I'll help you query them. How can I assist you today?",
+			id: "1",
+			text: "Welcome to **Context AI**! 👋 I'm here to help you extract knowledge from your documents and answer any questions based on them. Let’s get started!",
+			sender: "ai",
+			timestamp: new Date().toLocaleTimeString(),
+		},
+		{
+			id: "2",
+			text: "1.Enter your Gemini API key. \n\n 2.Select a Gemini model. \n\n 3.Upload your document in HTML, PDF, or TXT format.",
+			sender: "ai",
+			timestamp: new Date().toLocaleTimeString(),
+		},
+		{
+			id: "3",
+			text: "Once done, feel free to ask me anything about the document!",
 			sender: "ai",
 			timestamp: new Date().toLocaleTimeString(),
 		},
@@ -126,41 +138,27 @@ export default function Home() {
 	};
 
 	return (
-		<div className="flex flex-col items-center min-h-screen py-8 px-4 sm:px-6 lg:px-8">
-			<Card className="w-full max-w-4xl mb-8">
-				<CardHeader className="text-center">
-					<CardTitle className="text-4xl font-bold">
-						Welcome to Context AI
-					</CardTitle>
-					<CardDescription className="text-lg text-muted-foreground mt-2">
-						Upload your documents (HTML, PDF, TXT), input your
-						Gemini API key, and start querying!
-					</CardDescription>
-				</CardHeader>
-			</Card>
-
-			<div className="grid grid-cols-1 md:grid-cols-2 gap-8 w-full max-w-4xl mb-8">
+		<div className="flex md:flex-row flex-col w-full h-screen gap-2">
+			<div className="flex flex-col gap-2 h-full">
 				<ApiKeyInput
 					onApiKeySubmit={setApiKey}
 					onModelsLoaded={setAvailableModels}
 				/>
-				<DocumentUpload onDocumentsUpload={handleDocumentsUpload} />
-			</div>
-
-			{apiKey && availableModels.length > 0 && (
-				<div className="w-full max-w-4xl mb-8">
+				{apiKey && availableModels.length > 0 && (
 					<ModelSelector
 						models={availableModels}
 						onSelectModel={setSelectedModel}
 						selectedModel={selectedModel}
 					/>
+				)}
+				<div className="flex-1">
+					<DocumentUpload onDocumentsUpload={handleDocumentsUpload} />
 				</div>
-			)}
-
-			{apiKey && documents.length > 0 && (
-				<Card className="w-full max-w-4xl mb-8 flex flex-col h-[70vh]">
+			</div>
+			<div className="flex flex-col flex-1">
+				<Card className="flex flex-col flex-1">
 					<CardHeader>
-						<CardTitle>Query Interface</CardTitle>
+						<CardTitle>Context AI</CardTitle>
 					</CardHeader>
 					<CardContent className="flex flex-col flex-1 overflow-y-auto">
 						<ChatHistory messages={messages} />
@@ -186,7 +184,7 @@ export default function Home() {
 						/>
 					</CardFooter>
 				</Card>
-			)}
+			</div>
 		</div>
 	);
 }

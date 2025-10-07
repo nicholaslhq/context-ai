@@ -11,7 +11,7 @@ import {
 	CardTitle,
 } from "./ui/card";
 import { Label } from "./ui/label";
-import { X, CheckCircle2, Loader2, AlertCircle } from "lucide-react";
+import { X, CheckCircle2, Loader2, AlertCircle, Trash2 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 interface UploadedFile {
@@ -80,33 +80,32 @@ export default function DocumentUpload({
 		switch (status) {
 			case "pending":
 				return (
-					<Loader2 className="h-4 w-4 animate-spin text-muted-foreground" />
+					<Loader2 className="h-6 w-6 animate-spin text-muted-foreground" />
 				);
 			case "uploading":
 				return (
-					<Loader2 className="h-4 w-4 animate-spin text-blue-500" />
+					<Loader2 className="h-6 w-6 animate-spin text-gray-800" />
 				);
 			case "uploaded":
-				return <CheckCircle2 className="h-4 w-4 text-green-500" />;
+				return <CheckCircle2 className="h-6 w-6 text-green-500" />;
 			case "failed":
-				return <AlertCircle className="h-4 w-4 text-red-500" />;
+				return <AlertCircle className="h-6 w-6 text-red-500" />;
 			default:
 				return null;
 		}
 	};
 
 	return (
-		<Card className="w-full max-w-md">
+		<Card className="w-full w-md max-w-md flex flex-col overflow-y-auto flex-1 grow h-full">
 			<CardHeader>
 				<CardTitle>Upload Documents</CardTitle>
 				<CardDescription>
-					Supported formats: HTML, PDF, TXT, Markdown.
+					Supported formats: PDF, TXT, Markdown, HTML.
 				</CardDescription>
 			</CardHeader>
 			<CardContent>
 				<div className="grid gap-4">
 					<div className="grid gap-2">
-						<Label htmlFor="documents">Documents</Label>
 						<Input
 							id="documents"
 							type="file"
@@ -117,16 +116,13 @@ export default function DocumentUpload({
 					</div>
 					{uploadedFiles.length > 0 && (
 						<div className="grid gap-2">
-							<h4 className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
-								Selected Files:
-							</h4>
 							<ul className="mt-2 grid gap-2">
 								{uploadedFiles.map((uploadedFile) => (
 									<li
 										key={uploadedFile.id}
 										className="flex items-center justify-between rounded-md bg-muted p-2 text-sm"
 									>
-										<div className="flex items-center gap-2">
+										<div className="flex items-center gap-2 break-all">
 											{getStatusIcon(uploadedFile.status)}
 											<span
 												className={cn(
@@ -146,17 +142,25 @@ export default function DocumentUpload({
 													uploadedFile.id
 												)
 											}
-											className="h-auto p-1"
+											className="h-auto p-2 opacity-50 hover:opacity-100 transition-all"
 											disabled={
 												uploadedFile.status ===
 												"uploading"
 											}
 										>
-											<X className="h-4 w-4" />
+											<Trash2 className="h-4 w-4" />
 										</Button>
 									</li>
 								))}
 							</ul>
+						</div>
+					)}
+					{uploadedFiles.length == 0 && (
+						<div className="flex items-center justify-between text-sm text-muted-foreground mt-2">
+							<span className="flex items-center text-yellow-600">
+								<AlertCircle className="h-4 w-4 mr-1" />
+								No Document Uploaded
+							</span>
 						</div>
 					)}
 				</div>
