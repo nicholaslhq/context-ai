@@ -116,7 +116,7 @@ export default function DocumentUpload({
 					</div>
 					{uploadedFiles.length > 0 && (
 						<div className="grid gap-2">
-							<ul className="mt-2 grid gap-2 max-h-[200px] overflow-y-auto">
+							<ul className="mt-2 grid gap-2 max-h-[250px] overflow-y-auto">
 								{uploadedFiles.map((uploadedFile) => (
 									<li
 										key={uploadedFile.id}
