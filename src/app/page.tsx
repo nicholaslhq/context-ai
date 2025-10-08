@@ -138,8 +138,8 @@ export default function Home() {
 	};
 
 	return (
-		<div className="flex md:flex-row flex-col w-full h-screen gap-2 p-4">
-			<div className="flex flex-col gap-2 h-full md:w-80 min-w-80 flex-none">
+		<div className="flex md:flex-row flex-col w-full md:h-screen gap-2 p-4">
+			<div className="flex flex-col gap-2 md:w-80 min-w-80 md:max-h-screen">
 				<ApiKeyInput
 					onApiKeySubmit={setApiKey}
 					onModelsLoaded={setAvailableModels}
@@ -151,14 +151,19 @@ export default function Home() {
 						selectedModel={selectedModel}
 					/>
 				)}
-				<div className="flex-1">
+				<div className="md:flex-1">
 					<DocumentUpload onDocumentsUpload={handleDocumentsUpload} />
 				</div>
 			</div>
 			<div className="flex flex-col flex-1 h-full">
 				<Card className="flex flex-col flex-1">
 					<CardHeader>
-						<CardTitle>Context AI</CardTitle>
+						<CardTitle className="text-4xl font-bold bg-gradient-to-r from-blue-500 via-green-400 to-indigo-300 inline-block text-transparent bg-clip-text">
+							Context AI
+						</CardTitle>
+						<CardDescription>
+							Your AI-powered document assistant.
+						</CardDescription>
 					</CardHeader>
 					<CardContent className="flex flex-col flex-1 overflow-y-auto">
 						<ChatHistory messages={messages} />
