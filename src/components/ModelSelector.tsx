@@ -111,9 +111,7 @@ export default function ModelSelector({
 		<Card className="w-full w-md max-w-md">
 			<CardHeader>
 				<CardTitle>Select Gemini Model</CardTitle>
-				<CardDescription>
-					Choose the Gemini model you&apos;d like to use for querying.
-				</CardDescription>
+				<CardDescription>Choose a Gemini model.</CardDescription>
 			</CardHeader>
 			<CardContent>
 				<div className="grid gap-2">
