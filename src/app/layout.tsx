@@ -24,8 +24,8 @@ export default function RootLayout({
 				suppressHydrationWarning
 				className={`${geistSans.variable} ${geistMono.variable} antialiased`}
 			>
-				<div className="min-h-screen flex justify-center">
-					<main className="max-w-7xl">{children}</main>
+				<div className="flex justify-center h-screen">
+					<main className="max-w-7xl w-full h-full">{children}</main>
 				</div>
 			</body>
 		</html>
