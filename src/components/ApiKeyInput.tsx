@@ -114,7 +114,7 @@ export default function ApiKeyInput({
 	};
 
 	return (
-		<Card className="w-full w-md max-w-md">
+		<Card className="w-full">
 			<CardHeader>
 				<CardTitle>Gemini API Key</CardTitle>
 				<CardDescription>

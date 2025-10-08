@@ -16,7 +16,7 @@ interface ChatHistoryProps {
 
 const ChatHistory: React.FC<ChatHistoryProps> = ({ messages }) => {
 	return (
-		<div className="flex-1 p-4 space-y-4">
+		<div className="flex-1 space-y-4">
 			{messages.map((message) => (
 				<div
 					key={message.id}

@@ -138,8 +138,8 @@ export default function Home() {
 	};
 
 	return (
-		<div className="flex md:flex-row flex-col w-full h-screen gap-2">
-			<div className="flex flex-col gap-2 h-full">
+		<div className="flex md:flex-row flex-col w-full h-screen gap-2 p-4">
+			<div className="flex flex-col gap-2 h-full md:w-80 min-w-80 flex-none">
 				<ApiKeyInput
 					onApiKeySubmit={setApiKey}
 					onModelsLoaded={setAvailableModels}
@@ -155,7 +155,7 @@ export default function Home() {
 					<DocumentUpload onDocumentsUpload={handleDocumentsUpload} />
 				</div>
 			</div>
-			<div className="flex flex-col flex-1">
+			<div className="flex flex-col flex-1 h-full">
 				<Card className="flex flex-col flex-1">
 					<CardHeader>
 						<CardTitle>Context AI</CardTitle>

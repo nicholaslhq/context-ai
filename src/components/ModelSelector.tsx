@@ -108,7 +108,7 @@ export default function ModelSelector({
 	};
 
 	return (
-		<Card className="w-full w-md max-w-md">
+		<Card className="w-full">
 			<CardHeader>
 				<CardTitle>Select Gemini Model</CardTitle>
 				<CardDescription>Choose a Gemini model.</CardDescription>

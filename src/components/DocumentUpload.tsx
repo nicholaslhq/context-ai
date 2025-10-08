@@ -96,7 +96,7 @@ export default function DocumentUpload({
 	};
 
 	return (
-		<Card className="w-full w-md max-w-md flex flex-col overflow-y-auto flex-1 grow h-full">
+		<Card className="w-full flex flex-col overflow-y-auto flex-1 grow h-full">
 			<CardHeader>
 				<CardTitle>Upload Documents</CardTitle>
 				<CardDescription>
@@ -116,7 +116,7 @@ export default function DocumentUpload({
 					</div>
 					{uploadedFiles.length > 0 && (
 						<div className="grid gap-2">
-							<ul className="mt-2 grid gap-2">
+							<ul className="mt-2 grid gap-2 max-h-[200px] overflow-y-auto">
 								{uploadedFiles.map((uploadedFile) => (
 									<li
 										key={uploadedFile.id}
