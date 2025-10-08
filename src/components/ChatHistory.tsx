@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 
@@ -47,13 +47,37 @@ const ChatHistory: React.FC<ChatHistoryProps> = ({ messages }) => {
 							</div>
 						)}
 						{message.timestamp && (
-							<div className="text-xs mt-1 opacity-75 select-none">
-								{message.timestamp}
-							</div>
+							<ClientSideTimestamp
+								timestamp={message.timestamp}
+							/>
 						)}
 					</div>
 				</div>
 			))}
+		</div>
+	);
+};
+
+const ClientSideTimestamp: React.FC<{ timestamp: string }> = ({
+	timestamp,
+}) => {
+	const [clientTimestamp, setClientTimestamp] = useState<string | null>(null);
+
+	useEffect(() => {
+		setClientTimestamp(timestamp);
+	}, [timestamp]);
+
+	if (!clientTimestamp) {
+		return (
+			<div className="text-xs mt-1 opacity-0 select-none min-h-[1rem]">
+				...
+			</div>
+		);
+	}
+
+	return (
+		<div className="text-xs mt-1 opacity-75 select-none">
+			{clientTimestamp}
 		</div>
 	);
 };
