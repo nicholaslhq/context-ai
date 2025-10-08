@@ -38,7 +38,15 @@ export default function DocumentUpload({
 			status: "uploading",
 		}));
 
-		setUploadedFiles((prevFiles) => [...prevFiles, ...newUploadedFiles]);
+		setUploadedFiles((prevFiles) => {
+			const filteredPrevFiles = prevFiles.filter(
+				(existingFile) =>
+					!filesToProcess.some(
+						(newFile) => newFile.name === existingFile.file.name
+					)
+			);
+			return [...filteredPrevFiles, ...newUploadedFiles];
+		});
 
 		try {
 			onDocumentsUpload(filesToProcess);
