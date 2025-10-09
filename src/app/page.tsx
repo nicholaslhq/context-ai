@@ -214,7 +214,7 @@ export default function Home() {
 				/* Mobile-only tabs */
 				<MobileTabs
 					settingsContent={
-						<div className="flex flex-col p-2 gap-2">
+						<div className="flex flex-col p-2 gap-2 mt-2">
 							<ApiKeyInput
 								onApiKeySubmit={setApiKey}
 								onModelsLoaded={setAvailableModels}
@@ -236,15 +236,7 @@ export default function Home() {
 					chatContent={
 						<div className="flex flex-col flex-1 h-full">
 							<div className="flex flex-col flex-1 h-full bg-background">
-								<div className="flex flex-col p-4 border-b border-border">
-									<h1 className="text-4xl font-bold bg-gradient-to-r from-blue-500 via-green-400 to-indigo-300 inline-block text-transparent bg-clip-text">
-										Context AI
-									</h1>
-									<p className="text-muted-foreground">
-										Your AI-powered document assistant.
-									</p>
-								</div>
-								<div className="flex flex-col flex-1 overflow-y-auto p-4 pb-10">
+								<div className="flex flex-col flex-1 overflow-y-auto px-4 py-10">
 									<ChatHistory messages={messages} />
 									{isLoading && (
 										<div className="flex justify-start mt-4">
