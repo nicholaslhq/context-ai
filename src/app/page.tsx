@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import ApiKeyInput from "../components/ApiKeyInput";
-import DocumentUpload from "../components/DocumentUpload";
+import DocumentUpload, { UploadedFile } from "../components/DocumentUpload";
 import QueryInput from "../components/QueryInput";
 import ChatHistory from "../components/ChatHistory"; // Import ChatHistory
 import { GoogleGenerativeAI } from "@google/generative-ai";
@@ -21,10 +21,13 @@ import {
 } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import { loadFromLocalStorage } from "@/utils/localStorage";
+import MobileTabs from "@/components/MobileTabs";
+import { useMediaQuery } from "@/lib/utils"; // Import useMediaQuery
 
 export default function Home() {
 	const [apiKey, setApiKey] = useState<string | null>(null);
 	const [documents, setDocuments] = useState<File[]>([]);
+	const [uploadedFiles, setUploadedFiles] = useState<UploadedFile[]>([]); // New state for uploaded files
 	const [messages, setMessages] = useState<
 		{
 			id: string;
@@ -68,8 +71,13 @@ export default function Home() {
 		}
 	}, []);
 
+	useEffect(() => {
+		setDocuments(uploadedFiles.map((uf) => uf.file));
+	}, [uploadedFiles]);
+
 	const handleDocumentsUpload = (files: File[]) => {
-		setDocuments(files);
+		// This function is now primarily for triggering the upload process in DocumentUpload
+		// The actual `documents` state will be updated via the useEffect when `uploadedFiles` changes.
 	};
 
 	const handleQuerySubmit = async (query: string) => {
@@ -137,49 +145,123 @@ export default function Home() {
 		setMessages([]);
 	};
 
+	const isDesktop = useMediaQuery("(min-width: 768px)"); // Tailwind's 'md' breakpoint is 768px
+
 	return (
-		<div className="flex md:flex-row flex-col w-full md:h-full gap-2 p-4 md:overflow-hidden">
-			<div className="flex flex-col gap-2 md:w-80 min-w-80 h-full">
-				<ApiKeyInput
-					onApiKeySubmit={setApiKey}
-					onModelsLoaded={setAvailableModels}
-				/>
-				{apiKey && availableModels.length > 0 && (
-					<ModelSelector
-						models={availableModels}
-						onSelectModel={setSelectedModel}
-						selectedModel={selectedModel}
-					/>
-				)}
-				<div className="md:flex-1 flex flex-col flex-1">
-					<DocumentUpload onDocumentsUpload={handleDocumentsUpload} />
-				</div>
-			</div>
-			<div className="flex flex-col flex-1 h-full">
-				<Card className="flex flex-col flex-1 h-full">
-					<CardHeader>
-						<CardTitle className="text-4xl font-bold bg-gradient-to-r from-blue-500 via-green-400 to-indigo-300 inline-block text-transparent bg-clip-text">
-							Context AI
-						</CardTitle>
-						<CardDescription>
-							Your AI-powered document assistant.
-						</CardDescription>
-					</CardHeader>
-					<CardContent className="flex flex-col flex-1 overflow-y-auto">
-						<ChatHistory messages={messages} />
-						{isLoading && (
-							<div className="flex justify-start mt-4">
-								<div className="bg-gray-200 text-gray-800 p-3 rounded-lg max-w-[70%]">
-									<div className="flex space-x-1">
-										<div className="h-2 w-2 bg-gray-500 rounded-full animate-bounce [animation-delay:-0.3s]"></div>
-										<div className="h-2 w-2 bg-gray-500 rounded-full animate-bounce [animation-delay:-0.15s]"></div>
-										<div className="h-2 w-2 bg-gray-500 rounded-full animate-bounce"></div>
+		<div className="flex md:flex-row flex-col w-full md:h-full md:gap-2 md:p-4 md:overflow-hidden">
+			{isDesktop ? (
+				<>
+					{/* Desktop layout */}
+					<div className="flex flex-col md:gap-2 md:w-80 min-w-80 h-full">
+						<ApiKeyInput
+							onApiKeySubmit={setApiKey}
+							onModelsLoaded={setAvailableModels}
+						/>
+						{apiKey && availableModels.length > 0 && (
+							<ModelSelector
+								models={availableModels}
+								onSelectModel={setSelectedModel}
+								selectedModel={selectedModel}
+							/>
+						)}
+						<div className="md:flex-1 flex flex-col flex-1">
+							<DocumentUpload
+								onDocumentsUpload={handleDocumentsUpload}
+								uploadedFiles={uploadedFiles}
+								setUploadedFiles={setUploadedFiles}
+							/>
+						</div>
+					</div>
+					<div className="flex flex-col flex-1 h-full">
+						<Card className="flex flex-col flex-1 h-full">
+							<CardHeader>
+								<CardTitle className="text-4xl font-bold bg-gradient-to-r from-blue-500 via-green-400 to-indigo-300 inline-block text-transparent bg-clip-text">
+									Context AI
+								</CardTitle>
+								<CardDescription>
+									Your AI-powered document assistant.
+								</CardDescription>
+							</CardHeader>
+							<CardContent className="flex flex-col flex-1 overflow-y-auto">
+								<ChatHistory messages={messages} />
+								{isLoading && (
+									<div className="flex justify-start mt-4">
+										<div className="bg-gray-200 text-gray-800 p-3 rounded-lg max-w-[70%]">
+											<div className="flex space-x-1">
+												<div className="h-2 w-2 bg-gray-500 rounded-full animate-bounce [animation-delay:-0.3s]"></div>
+												<div className="h-2 w-2 bg-gray-500 rounded-full animate-bounce [animation-delay:-0.15s]"></div>
+												<div className="h-2 w-2 bg-gray-500 rounded-full animate-bounce"></div>
+											</div>
+										</div>
 									</div>
+								)}
+							</CardContent>
+							<div className="sticky bottom-0 z-10 m-4">
+								<QueryInput
+									onQuerySubmit={handleQuerySubmit}
+									onClearChat={handleClearChat}
+									disabled={
+										!apiKey ||
+										documents.length === 0 ||
+										isLoading
+									}
+								/>
+							</div>
+						</Card>
+					</div>
+				</>
+			) : (
+				/* Mobile-only tabs */
+				<MobileTabs
+					settingsContent={
+						<div className="flex flex-col p-2 gap-2">
+							<ApiKeyInput
+								onApiKeySubmit={setApiKey}
+								onModelsLoaded={setAvailableModels}
+							/>
+							{apiKey && availableModels.length > 0 && (
+								<ModelSelector
+									models={availableModels}
+									onSelectModel={setSelectedModel}
+									selectedModel={selectedModel}
+								/>
+							)}
+							<DocumentUpload
+								onDocumentsUpload={handleDocumentsUpload}
+								uploadedFiles={uploadedFiles}
+								setUploadedFiles={setUploadedFiles}
+							/>
+						</div>
+					}
+					chatContent={
+						<div className="flex flex-col flex-1 h-full">
+							<div className="flex flex-col flex-1 h-full bg-background">
+								<div className="flex flex-col p-4 border-b border-border">
+									<h1 className="text-4xl font-bold bg-gradient-to-r from-blue-500 via-green-400 to-indigo-300 inline-block text-transparent bg-clip-text">
+										Context AI
+									</h1>
+									<p className="text-muted-foreground">
+										Your AI-powered document assistant.
+									</p>
+								</div>
+								<div className="flex flex-col flex-1 overflow-y-auto p-4 pb-10">
+									<ChatHistory messages={messages} />
+									{isLoading && (
+										<div className="flex justify-start mt-4">
+											<div className="bg-gray-200 text-gray-800 p-3 rounded-lg max-w-[70%]">
+												<div className="flex space-x-1">
+													<div className="h-2 w-2 bg-gray-500 rounded-full animate-bounce [animation-delay:-0.3s]"></div>
+													<div className="h-2 w-2 bg-gray-500 rounded-full animate-bounce [animation-delay:-0.15s]"></div>
+													<div className="h-2 w-2 bg-gray-500 rounded-full animate-bounce"></div>
+												</div>
+											</div>
+										</div>
+									)}
 								</div>
 							</div>
-						)}
-					</CardContent>
-					<CardFooter className="sticky bottom-0 z-10 bg-background p-4">
+						</div>
+					}
+					queryInput={
 						<QueryInput
 							onQuerySubmit={handleQuerySubmit}
 							onClearChat={handleClearChat}
@@ -187,9 +269,9 @@ export default function Home() {
 								!apiKey || documents.length === 0 || isLoading
 							}
 						/>
-					</CardFooter>
-				</Card>
-			</div>
+					}
+				/>
+			)}
 		</div>
 	);
 }

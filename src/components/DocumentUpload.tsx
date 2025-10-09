@@ -14,7 +14,7 @@ import { Label } from "./ui/label";
 import { X, CheckCircle2, Loader2, AlertCircle, Trash2 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
-interface UploadedFile {
+export interface UploadedFile {
 	id: string;
 	file: File;
 	status: "pending" | "uploading" | "uploaded" | "failed";
@@ -22,13 +22,15 @@ interface UploadedFile {
 
 interface DocumentUploadProps {
 	onDocumentsUpload: (files: File[]) => void;
+	uploadedFiles: UploadedFile[];
+	setUploadedFiles: React.Dispatch<React.SetStateAction<UploadedFile[]>>;
 }
 
 export default function DocumentUpload({
 	onDocumentsUpload,
+	uploadedFiles,
+	setUploadedFiles,
 }: DocumentUploadProps) {
-	const [uploadedFiles, setUploadedFiles] = useState<UploadedFile[]>([]);
-
 	const processAndUploadFiles = async (filesToProcess: File[]) => {
 		if (filesToProcess.length === 0) return;
 
