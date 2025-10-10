@@ -118,7 +118,15 @@ export default function ApiKeyInput({
 			<CardHeader>
 				<CardTitle>Gemini API Key</CardTitle>
 				<CardDescription>
-					Please enter your Gemini API key.
+					Get your free Gemini API key{" "}
+					<a
+						href="https://aistudio.google.com/apikey"
+						target="_blank"
+						rel="noopener noreferrer"
+						className="text-blue-500 underline"
+					>
+						here
+					</a>
 				</CardDescription>
 			</CardHeader>
 			<CardContent>

@@ -111,7 +111,7 @@ export default function ModelSelector({
 		<Card className="w-full">
 			<CardHeader>
 				<CardTitle>Select Gemini Model</CardTitle>
-				<CardDescription>Choose a Gemini model.</CardDescription>
+				<CardDescription>Choose a Gemini model</CardDescription>
 			</CardHeader>
 			<CardContent>
 				<div className="grid gap-2">

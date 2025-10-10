@@ -110,7 +110,7 @@ export default function DocumentUpload({
 			<CardHeader>
 				<CardTitle>Upload Documents</CardTitle>
 				<CardDescription>
-					Supported formats: PDF, TXT, Markdown, HTML.
+					Supported formats: PDF, TXT, Markdown, HTML
 				</CardDescription>
 			</CardHeader>
 			<CardContent>
