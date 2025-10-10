@@ -40,7 +40,13 @@ const ChatHistory: React.FC<ChatHistoryProps> = ({ messages }) => {
 								<div className="h-2 w-2 bg-gray-500 rounded-full animate-bounce"></div>
 							</div>
 						) : (
-							<div className="break-words text-sm md:text-base">
+							<div
+								className={`prose break-words text-sm md:text-base ${
+									message.sender === "user"
+										? "text-white"
+										: ""
+								}`}
+							>
 								<ReactMarkdown remarkPlugins={[remarkGfm]}>
 									{message.text}
 								</ReactMarkdown>
