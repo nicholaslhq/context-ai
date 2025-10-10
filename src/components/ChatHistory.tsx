@@ -40,7 +40,7 @@ const ChatHistory: React.FC<ChatHistoryProps> = ({ messages }) => {
 								<div className="h-2 w-2 bg-gray-500 rounded-full animate-bounce"></div>
 							</div>
 						) : (
-							<div className="break-words">
+							<div className="break-words text-sm md:text-base">
 								<ReactMarkdown remarkPlugins={[remarkGfm]}>
 									{message.text}
 								</ReactMarkdown>
@@ -76,7 +76,7 @@ const ClientSideTimestamp: React.FC<{ timestamp: string }> = ({
 	}
 
 	return (
-		<div className="text-xs mt-1 opacity-75 select-none">
+		<div className="text-xs md:text-sm mt-1 opacity-75 select-none">
 			{clientTimestamp}
 		</div>
 	);

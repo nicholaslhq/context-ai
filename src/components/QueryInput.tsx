@@ -53,7 +53,7 @@ export default function QueryInput({
 				placeholder="Ask a question about your documents..."
 				rows={1} // Start with 1 row and let it expand
 				disabled={disabled}
-				className="min-h-[106px] md:min-h-[48px] resize-none overflow-y-hidden bg-background" // Adjusted padding-right and added overflow-y-auto
+				className="min-h-[106px] md:min-h-[48px] resize-none overflow-y-hidden bg-background text-sm md:text-base" // Adjusted padding-right and added overflow-y-auto
 				style={{ maxHeight: "150px" }} // Set a max height for the textarea
 			/>
 			<div className="flex flex-col md:flex-row items-start gap-2">
