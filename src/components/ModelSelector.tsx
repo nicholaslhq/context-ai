@@ -45,8 +45,12 @@ export default function ModelSelector({
 	const defaultModelName = "models/gemini-flash-latest";
 
 	// Filter models to only show those that support `generateContent`
-	const chatModels = models.filter((model) =>
-		model.supportedGenerationMethods?.includes("generateContent")
+	const chatModels = models.filter(
+		(model) =>
+			model.supportedGenerationMethods?.includes("generateContent") &&
+			model.name.includes("gemini") &&
+			!model.name.includes("image") &&
+			!model.name.includes("embedding")
 	);
 
 	// Sort models to show the latest versions first
