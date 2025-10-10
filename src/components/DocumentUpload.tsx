@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import React from "react";
 import { Button } from "./ui/button";
 import { Input } from "./ui/input";
 import {
@@ -10,8 +10,7 @@ import {
 	CardHeader,
 	CardTitle,
 } from "./ui/card";
-import { Label } from "./ui/label";
-import { X, CheckCircle2, Loader2, AlertCircle, Trash2 } from "lucide-react";
+import { CheckCircle2, Loader2, AlertCircle, Trash2 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 export interface UploadedFile {

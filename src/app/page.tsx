@@ -7,19 +7,15 @@ import QueryInput from "../components/QueryInput";
 import ChatHistory from "../components/ChatHistory"; // Import ChatHistory
 import { GoogleGenerativeAI } from "@google/generative-ai";
 import { parseDocument } from "../utils/documentParser";
-import ReactMarkdown from "react-markdown";
-import remarkGfm from "remark-gfm";
 import ModelSelector from "@/components/ModelSelector";
 import { GeminiModel } from "@/utils/geminiApi";
 import {
 	Card,
 	CardContent,
 	CardDescription,
-	CardFooter,
 	CardHeader,
 	CardTitle,
 } from "@/components/ui/card";
-import { Separator } from "@/components/ui/separator";
 import { loadFromLocalStorage } from "@/utils/localStorage";
 import MobileTabs from "@/components/MobileTabs";
 import { useMediaQuery } from "@/lib/utils"; // Import useMediaQuery
@@ -75,7 +71,7 @@ export default function Home() {
 		setDocuments(uploadedFiles.map((uf) => uf.file));
 	}, [uploadedFiles]);
 
-	const handleDocumentsUpload = (files: File[]) => {
+	const handleDocumentsUpload = () => {
 		// This function is now primarily for triggering the upload process in DocumentUpload
 		// The actual `documents` state will be updated via the useEffect when `uploadedFiles` changes.
 	};

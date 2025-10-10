@@ -3,7 +3,6 @@
 import { useState, useRef, useEffect } from "react";
 import { Button } from "./ui/button";
 import { Textarea } from "./ui/textarea";
-import { Label } from "./ui/label";
 import { Send, Trash2 } from "lucide-react"; // Import icons
 
 interface QueryInputProps {

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { Input } from "./ui/input";
 import {
 	Card,
@@ -10,14 +10,7 @@ import {
 	CardTitle,
 } from "./ui/card";
 import { Label } from "./ui/label";
-import {
-	X,
-	CheckCircle2,
-	Loader2,
-	AlertCircle,
-	Save,
-	Trash2,
-} from "lucide-react";
+import { CheckCircle2, Loader2, AlertCircle, Save, Trash2 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { listModels, GeminiModel } from "@/utils/geminiApi";
 import { Button } from "./ui/button";
@@ -40,7 +33,6 @@ export default function ApiKeyInput({
 }: ApiKeyInputProps) {
 	const [apiKey, setApiKey] = useState("");
 	const [status, setStatus] = useState<ApiKeyStatus>("idle");
-	const [availableModels, setAvailableModels] = useState<GeminiModel[]>([]);
 	const [isApiKeySaved, setIsApiKeySaved] = useState(false);
 
 	useEffect(() => {
@@ -51,6 +43,28 @@ export default function ApiKeyInput({
 			setIsApiKeySaved(true);
 		}
 	}, []); // Empty dependency array means this effect runs once on mount
+
+	const validateApiKey = useCallback(
+		async (key: string) => {
+			setStatus("validating");
+			try {
+				// Attempt to list models to validate the API key
+				const models = await listModels(key);
+				setStatus("valid");
+				onApiKeySubmit(key);
+				onModelsLoaded(models);
+				setIsApiKeySaved(loadFromLocalStorage("geminiApiKey") === key);
+			} catch (error) {
+				console.error(
+					"API Key validation or model listing failed:",
+					error
+				);
+				setStatus("invalid");
+				setIsApiKeySaved(false);
+			}
+		},
+		[onApiKeySubmit, onModelsLoaded]
+	);
 
 	useEffect(() => {
 		const handler = setTimeout(() => {
@@ -65,24 +79,7 @@ export default function ApiKeyInput({
 		return () => {
 			clearTimeout(handler);
 		};
-	}, [apiKey]); // This effect runs when apiKey changes, for validation
-
-	const validateApiKey = async (key: string) => {
-		setStatus("validating");
-		try {
-			// Attempt to list models to validate the API key
-			const models = await listModels(key);
-			setStatus("valid");
-			onApiKeySubmit(key);
-			setAvailableModels(models);
-			onModelsLoaded(models);
-			setIsApiKeySaved(loadFromLocalStorage("geminiApiKey") === key);
-		} catch (error) {
-			console.error("API Key validation or model listing failed:", error);
-			setStatus("invalid");
-			setIsApiKeySaved(false);
-		}
-	};
+	}, [apiKey, validateApiKey]); // This effect runs when apiKey changes, for validation
 
 	const handleSaveApiKey = () => {
 		saveToLocalStorage("geminiApiKey", apiKey);
