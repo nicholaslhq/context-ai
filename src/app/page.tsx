@@ -179,7 +179,7 @@ export default function Home() {
 									Context AI
 								</CardTitle>
 								<CardDescription>
-									Your AI-powered document assistant.
+									Your AI-powered document assistant
 								</CardDescription>
 							</CardHeader>
 							<CardContent className="flex flex-col flex-1 overflow-y-auto">

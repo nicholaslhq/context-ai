@@ -67,7 +67,7 @@ export default function MobileTabs({
 								: "text-gray-500 dark:text-gray-400"
 						}`}
 					>
-						Your AI-powered document assistant.
+						Your AI-powered document assistant
 					</span>
 				</Button>
 				<Button
