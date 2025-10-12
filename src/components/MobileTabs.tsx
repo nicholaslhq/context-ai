@@ -1,7 +1,6 @@
 "use client";
 
 import React, { useState, ReactNode, useEffect } from "react";
-import { Button } from "@/components/ui/button";
 import { Settings } from "lucide-react"; // Import the Settings icon
 
 interface MobileTabsProps {
@@ -42,17 +41,20 @@ export default function MobileTabs({
 	return (
 		<div className="flex flex-col w-full h-full md:hidden">
 			<div
-				className={`fixed top-0 left-0 right-0 z-10 flex justify-around p-2 transition-transform duration-300 gap-2 ${
+				className={`fixed top-0 left-0 right-0 z-10 flex justify-around p-2 transition-transform duration-300 ${
 					isHidden ? "-translate-y-full" : "translate-y-0"
 				}`}
 			>
-				<Button
-					variant={activeTab === "chat" ? "default" : "outline"}
+				<div
 					onClick={() => setActiveTab("chat")}
-					className="flex-1 h-16 flex flex-col justify-center items-center gap-0"
+					className={`flex-1 h-16 flex flex-col justify-center items-center gap-0 cursor-pointer transition-all duration-300 ease-in-out ${
+						activeTab === "chat"
+							? "border-b-2 border-blue-500 bg-white dark:bg-gray-800 text-black dark:text-white"
+							: "border-b-2 bg-white dark:bg-gray-800 border-gray-300 dark:border-gray-600 text-black dark:text-white"
+					}`}
 				>
 					<span
-						className={`text-xl font-bold ${
+						className={`text-2xl font-bold ${
 							activeTab === "chat"
 								? "bg-gradient-to-r from-blue-500 via-green-400 to-indigo-300 inline-block text-transparent bg-clip-text"
 								: "text-black dark:text-white"
@@ -69,14 +71,17 @@ export default function MobileTabs({
 					>
 						Your AI-powered document assistant
 					</span>
-				</Button>
-				<Button
-					variant={activeTab === "settings" ? "default" : "outline"}
+				</div>
+				<div
 					onClick={() => setActiveTab("settings")}
-					className="w-16 h-16"
+					className={`w-16 h-16 flex justify-center items-center cursor-pointer transition-all duration-300 ease-in-out ${
+						activeTab === "settings"
+							? "border-b-2 border-blue-500 bg-white dark:bg-gray-800 text-black dark:text-white"
+							: "border-b-2 bg-white dark:bg-gray-800 border-gray-300 dark:border-gray-600 text-black dark:text-white"
+					}`}
 				>
 					<Settings className="h-5 w-5" />
-				</Button>
+				</div>
 			</div>
 			<div className="flex-1 overflow-y-auto pt-[64px] pb-[100px]">
 				{" "}
