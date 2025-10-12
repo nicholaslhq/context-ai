@@ -72,7 +72,6 @@ export default function QueryInput({
 					type="button"
 					size="icon"
 					variant="outline"
-					disabled={disabled}
 					onClick={() => {
 						if (
 							window.confirm(
