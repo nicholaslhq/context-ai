@@ -247,7 +247,7 @@ ${query}`;
 					chatContent={
 						<div className="flex flex-col flex-1 h-full">
 							<div className="flex flex-col flex-1 h-full bg-background">
-								<div className="flex flex-col flex-1 overflow-y-auto px-4 py-10">
+								<div className="flex flex-col flex-1 overflow-y-auto px-4 py-5">
 									<ChatHistory messages={messages} />
 									{isLoading && (
 										<div className="flex justify-start mt-4">
