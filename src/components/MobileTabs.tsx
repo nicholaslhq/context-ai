@@ -43,7 +43,7 @@ export default function MobileTabs({
 	return (
 		<div className="flex flex-col w-full h-full md:hidden">
 			<div
-				className={`fixed top-0 left-0 right-0 z-10 flex justify-around p-2 transition-transform duration-300 ${
+				className={`fixed top-0 left-0 right-0 z-10 flex justify-around transition-transform duration-300 ${
 					isHidden ? "-translate-y-full" : "translate-y-0"
 				}`}
 			>
