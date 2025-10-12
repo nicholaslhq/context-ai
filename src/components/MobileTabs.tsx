@@ -2,6 +2,7 @@
 
 import React, { useState, ReactNode, useEffect } from "react";
 import { Settings } from "lucide-react"; // Import the Settings icon
+import { useSettings } from "@/context/SettingsContext"; // Import the useSettings hook
 
 interface MobileTabsProps {
 	settingsContent: ReactNode;
@@ -17,6 +18,7 @@ export default function MobileTabs({
 	const [activeTab, setActiveTab] = useState<"settings" | "chat">("chat");
 	const [isHidden, setIsHidden] = useState(false);
 	const [lastScrollY, setLastScrollY] = useState(0);
+	const { areAllSettingsComplete } = useSettings(); // Use the settings context
 
 	useEffect(() => {
 		const handleScroll = () => {
@@ -74,13 +76,19 @@ export default function MobileTabs({
 				</div>
 				<div
 					onClick={() => setActiveTab("settings")}
-					className={`w-16 h-16 flex justify-center items-center cursor-pointer transition-all duration-300 ease-in-out ${
+					className={`relative w-16 h-16 flex justify-center items-center cursor-pointer transition-all duration-300 ease-in-out ${
 						activeTab === "settings"
 							? "border-b-2 border-blue-500 bg-white dark:bg-gray-800 text-black dark:text-white"
 							: "border-b-2 bg-white dark:bg-gray-800 border-gray-300 dark:border-gray-600 text-black dark:text-white"
 					}`}
 				>
 					<Settings className="h-5 w-5" />
+					{!areAllSettingsComplete && (
+						<span className="absolute top-1 right-1 flex h-2 w-2">
+							<span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-red-400 opacity-75"></span>
+							<span className="relative inline-flex h-2 w-2 rounded-full bg-red-500"></span>
+						</span>
+					)}
 				</div>
 			</div>
 			<div className="flex-1 overflow-y-auto pt-[64px] pb-[100px]">

@@ -2,6 +2,7 @@
 
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
+import { SettingsProvider } from "@/context/SettingsContext";
 
 const geistSans = Geist({
 	variable: "--font-geist-sans",
@@ -58,9 +59,13 @@ export default function RootLayout({
 				suppressHydrationWarning
 				className={`${geistSans.variable} ${geistMono.variable} antialiased`}
 			>
-				<div className="flex justify-center h-screen">
-					<main className="max-w-7xl w-full h-full">{children}</main>
-				</div>
+				<SettingsProvider>
+					<div className="flex justify-center h-screen">
+						<main className="max-w-7xl w-full h-full">
+							{children}
+						</main>
+					</div>
+				</SettingsProvider>
 			</body>
 		</html>
 	);

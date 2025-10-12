@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { useEffect } from "react";
 import { Button } from "./ui/button";
 import { Input } from "./ui/input";
 import {
@@ -12,6 +12,7 @@ import {
 } from "./ui/card";
 import { CheckCircle2, Loader2, AlertCircle, Trash2 } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { useSettings } from "@/context/SettingsContext";
 
 export interface UploadedFile {
 	id: string;
@@ -30,6 +31,12 @@ export default function DocumentUpload({
 	uploadedFiles,
 	setUploadedFiles,
 }: DocumentUploadProps) {
+	const { setIsDocumentUploadedComplete } = useSettings();
+
+	useEffect(() => {
+		setIsDocumentUploadedComplete(uploadedFiles.length > 0);
+	}, [uploadedFiles, setIsDocumentUploadedComplete]);
+
 	const processAndUploadFiles = async (filesToProcess: File[]) => {
 		if (filesToProcess.length === 0) return;
 
@@ -75,7 +82,7 @@ export default function DocumentUpload({
 		if (e.target.files) {
 			const filesArray = Array.from(e.target.files);
 			processAndUploadFiles(filesArray);
-			e.target.value = ""; // Clear the input so the same file can be selected again
+			e.target.value = "";
 		}
 	};
 

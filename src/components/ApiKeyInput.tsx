@@ -19,6 +19,7 @@ import {
 	loadFromLocalStorage,
 	removeFromLocalStorage,
 } from "@/utils/localStorage";
+import { useSettings } from "@/context/SettingsContext";
 
 interface ApiKeyInputProps {
 	onApiKeySubmit: (apiKey: string) => void;
@@ -34,26 +35,26 @@ export default function ApiKeyInput({
 	const [apiKey, setApiKey] = useState("");
 	const [status, setStatus] = useState<ApiKeyStatus>("idle");
 	const [isApiKeySaved, setIsApiKeySaved] = useState(false);
+	const { setIsApiKeyComplete } = useSettings();
 
 	useEffect(() => {
 		const storedApiKey = loadFromLocalStorage("geminiApiKey");
 		if (storedApiKey) {
 			setApiKey(storedApiKey);
-			// No immediate validation here, let the debounced effect handle it
 			setIsApiKeySaved(true);
 		}
-	}, []); // Empty dependency array means this effect runs once on mount
+	}, []);
 
 	const validateApiKey = useCallback(
 		async (key: string) => {
 			setStatus("validating");
 			try {
-				// Attempt to list models to validate the API key
 				const models = await listModels(key);
 				setStatus("valid");
 				onApiKeySubmit(key);
 				onModelsLoaded(models);
 				setIsApiKeySaved(loadFromLocalStorage("geminiApiKey") === key);
+				setIsApiKeyComplete(true);
 			} catch (error) {
 				console.error(
 					"API Key validation or model listing failed:",
@@ -61,9 +62,10 @@ export default function ApiKeyInput({
 				);
 				setStatus("invalid");
 				setIsApiKeySaved(false);
+				setIsApiKeyComplete(false);
 			}
 		},
-		[onApiKeySubmit, onModelsLoaded]
+		[onApiKeySubmit, onModelsLoaded, setIsApiKeyComplete]
 	);
 
 	useEffect(() => {
@@ -73,17 +75,19 @@ export default function ApiKeyInput({
 			} else {
 				setStatus("idle");
 				setIsApiKeySaved(false);
+				setIsApiKeyComplete(false);
 			}
-		}, 500); // Debounce for 500ms
+		}, 500);
 
 		return () => {
 			clearTimeout(handler);
 		};
-	}, [apiKey, validateApiKey]); // This effect runs when apiKey changes, for validation
+	}, [apiKey, validateApiKey, setIsApiKeyComplete]);
 
 	const handleSaveApiKey = () => {
 		saveToLocalStorage("geminiApiKey", apiKey);
 		setIsApiKeySaved(true);
+		setIsApiKeyComplete(true);
 	};
 
 	const handleClearApiKey = () => {
@@ -91,8 +95,9 @@ export default function ApiKeyInput({
 		setApiKey("");
 		setStatus("idle");
 		setIsApiKeySaved(false);
-		onApiKeySubmit(""); // Clear the API key in the parent component as well
-		onModelsLoaded([]); // Clear models in the parent component
+		onApiKeySubmit("");
+		onModelsLoaded([]);
+		setIsApiKeyComplete(false);
 	};
 
 	const getStatusIcon = (currentStatus: ApiKeyStatus) => {
@@ -137,7 +142,7 @@ export default function ApiKeyInput({
 								value={apiKey}
 								onChange={(e) => {
 									setApiKey(e.target.value);
-									setIsApiKeySaved(false); // Indicate unsaved changes
+									setIsApiKeySaved(false);
 								}}
 								placeholder="Enter your Gemini API key"
 								required

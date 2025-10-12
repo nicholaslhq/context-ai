@@ -22,6 +22,7 @@ import {
 	loadFromLocalStorage,
 	removeFromLocalStorage,
 } from "@/utils/localStorage";
+import { useSettings } from "@/context/SettingsContext";
 
 interface ModelSelectorProps {
 	models: GeminiModel[];
@@ -36,15 +37,15 @@ export default function ModelSelector({
 }: ModelSelectorProps) {
 	const [noModelsError, setNoModelsError] = useState(false);
 	const [isModelSaved, setIsModelSaved] = useState(false);
+	const { setIsModelSelectedComplete } = useSettings();
 
 	const handleValueChange = (value: string) => {
 		onSelectModel(value);
-		setIsModelSaved(false); // Indicate unsaved changes
+		setIsModelSaved(false);
 	};
 
 	const defaultModelName = "models/gemini-flash-latest";
 
-	// Filter models to only show those that support `generateContent`
 	const chatModels = models.filter(
 		(model) =>
 			model.supportedGenerationMethods?.includes("generateContent") &&
@@ -53,17 +54,13 @@ export default function ModelSelector({
 			!model.name.includes("embedding")
 	);
 
-	// Sort models to show the latest versions first
 	const sortedModels = chatModels.sort((a, b) => {
-		// Assuming model names like "gemini-pro-1.5-latest" or "gemini-2.5-flash-preview-05-20"
-		// This sorting might need refinement based on actual model naming conventions
 		if (a.name.includes("latest") && !b.name.includes("latest")) return -1;
 		if (!a.name.includes("latest") && b.name.includes("latest")) return 1;
-		return b.name.localeCompare(a.name); // Fallback to alphabetical for consistent order
+		return b.name.localeCompare(a.name);
 	});
 
 	useEffect(() => {
-		// Only attempt to set an initial model if no model is currently selected
 		if (!selectedModel) {
 			const storedModel = loadFromLocalStorage("geminiSelectedModel");
 			if (
@@ -72,43 +69,60 @@ export default function ModelSelector({
 			) {
 				onSelectModel(storedModel);
 				setIsModelSaved(true);
+				setIsModelSelectedComplete(true);
 			} else if (sortedModels.length > 0) {
-				// If no stored model or stored model is invalid, set a default
 				const geminiFlashLatest = sortedModels.find(
 					(model) => model.name === defaultModelName
 				);
 				if (geminiFlashLatest) {
 					onSelectModel(geminiFlashLatest.name);
+					setIsModelSelectedComplete(true);
 				} else {
-					// Ensure sortedModels is not empty before accessing
-					onSelectModel(sortedModels[0].name); // Access first element of array
+					onSelectModel(sortedModels[0].name);
+					setIsModelSelectedComplete(true);
 				}
+			} else {
+				setIsModelSelectedComplete(false);
 			}
+		} else {
+			setIsModelSelectedComplete(true);
 		}
-	}, [models, onSelectModel, sortedModels, selectedModel]);
+	}, [
+		models,
+		onSelectModel,
+		sortedModels,
+		selectedModel,
+		setIsModelSelectedComplete,
+	]);
 
 	useEffect(() => {
 		if (!selectedModel && sortedModels.length === 0) {
 			setNoModelsError(true);
+			setIsModelSelectedComplete(false);
 		} else {
 			setNoModelsError(false);
+			if (selectedModel) {
+				setIsModelSelectedComplete(true);
+			}
 		}
 		setIsModelSaved(
 			loadFromLocalStorage("geminiSelectedModel") === selectedModel
 		);
-	}, [selectedModel, sortedModels]); // Re-evaluate when selectedModel or sortedModels changes
+	}, [selectedModel, sortedModels, setIsModelSelectedComplete]);
 
 	const handleSaveModel = () => {
 		if (selectedModel) {
 			saveToLocalStorage("geminiSelectedModel", selectedModel);
 			setIsModelSaved(true);
+			setIsModelSelectedComplete(true);
 		}
 	};
 
 	const handleClearModel = () => {
 		removeFromLocalStorage("geminiSelectedModel");
 		setIsModelSaved(false);
-		onSelectModel(""); // Clear the selected model in the parent component
+		onSelectModel("");
+		setIsModelSelectedComplete(false);
 	};
 
 	return (
