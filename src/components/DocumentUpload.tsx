@@ -14,6 +14,9 @@ import { CheckCircle2, Loader2, AlertCircle, Trash2 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useSettings } from "@/context/SettingsContext";
 
+const MAX_FILE_SIZE_MB = 20; // Maximum file size in MB
+const MAX_FILE_SIZE_BYTES = MAX_FILE_SIZE_MB * 1024 * 1024; // Convert to bytes
+
 export interface UploadedFile {
 	id: string;
 	file: File;
@@ -81,7 +84,16 @@ export default function DocumentUpload({
 	const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
 		if (e.target.files) {
 			const filesArray = Array.from(e.target.files);
-			processAndUploadFiles(filesArray);
+			const validFiles = filesArray.filter((file) => {
+				if (file.size > MAX_FILE_SIZE_BYTES) {
+					alert(
+						`File "${file.name}" is too large. Maximum size is ${MAX_FILE_SIZE_MB}MB.`
+					);
+					return false;
+				}
+				return true;
+			});
+			processAndUploadFiles(validFiles);
 			e.target.value = "";
 		}
 	};
