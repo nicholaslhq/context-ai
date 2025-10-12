@@ -216,6 +216,7 @@ ${query}`;
 										documents.length === 0 ||
 										isLoading
 									}
+									isChatHistoryEmpty={messages.length == 0}
 								/>
 							</div>
 						</Card>
@@ -271,6 +272,7 @@ ${query}`;
 							disabled={
 								!apiKey || documents.length === 0 || isLoading
 							}
+							isChatHistoryEmpty={messages.length <= 3}
 						/>
 					}
 				/>

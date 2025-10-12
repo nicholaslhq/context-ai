@@ -9,12 +9,14 @@ interface QueryInputProps {
 	onQuerySubmit: (query: string) => void;
 	onClearChat: () => void;
 	disabled: boolean;
+	isChatHistoryEmpty: boolean;
 }
 
 export default function QueryInput({
 	onQuerySubmit,
 	onClearChat,
 	disabled,
+	isChatHistoryEmpty,
 }: QueryInputProps) {
 	const [query, setQuery] = useState("");
 	const textareaRef = useRef<HTMLTextAreaElement>(null);
@@ -71,7 +73,16 @@ export default function QueryInput({
 					size="icon"
 					variant="outline"
 					disabled={disabled}
-					onClick={onClearChat}
+					onClick={() => {
+						if (
+							window.confirm(
+								"Are you sure you want to clear the chat?"
+							)
+						) {
+							onClearChat();
+						}
+					}}
+					disabled={disabled || isChatHistoryEmpty}
 					className="p-6"
 				>
 					<Trash2 className="h-8 w-8" />
