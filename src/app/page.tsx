@@ -1,24 +1,18 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import ApiKeyInput from "../components/ApiKeyInput";
-import DocumentUpload, { UploadedFile } from "../components/DocumentUpload";
-import QueryInput from "../components/QueryInput";
-import ChatHistory from "../components/ChatHistory"; // Import ChatHistory
+import { UploadedFile } from "../components/DocumentUpload";
 import { GoogleGenerativeAI } from "@google/generative-ai";
 import { parseDocument } from "../utils/documentParser";
-import ModelSelector from "@/components/ModelSelector";
 import { GeminiModel } from "@/utils/geminiApi";
-import {
-	Card,
-	CardContent,
-	CardDescription,
-	CardHeader,
-	CardTitle,
-} from "@/components/ui/card";
 import { loadFromLocalStorage } from "@/utils/localStorage";
 import MobileTabs from "@/components/MobileTabs";
-import { useMediaQuery } from "@/lib/utils"; // Import useMediaQuery
+import { useMediaQuery } from "@/lib/utils";
+import DesktopSidebar from "@/components/DesktopSidebar";
+import ChatWindow from "@/components/ChatWindow";
+import MobileSettingsContent from "@/components/MobileSettingsContent";
+import MobileChatContent from "@/components/MobileChatContent";
+import QueryInput from "../components/QueryInput";
 
 export default function Home() {
 	const [apiKey, setApiKey] = useState<string | null>(null);
@@ -163,107 +157,50 @@ ${query}`;
 			{isDesktop ? (
 				<>
 					{/* Desktop layout */}
-					<div className="flex flex-col md:gap-2 md:w-80 min-w-80 h-full">
-						<ApiKeyInput
-							onApiKeySubmit={setApiKey}
-							onModelsLoaded={setAvailableModels}
-						/>
-						{apiKey && availableModels.length > 0 && (
-							<ModelSelector
-								models={availableModels}
-								onSelectModel={setSelectedModel}
-								selectedModel={selectedModel}
-							/>
-						)}
-						<div className="md:flex-1 flex flex-col flex-1">
-							<DocumentUpload
-								onDocumentsUpload={handleDocumentsUpload}
-								uploadedFiles={uploadedFiles}
-								setUploadedFiles={setUploadedFiles}
-							/>
-						</div>
-					</div>
+					<DesktopSidebar
+						apiKey={apiKey}
+						setApiKey={setApiKey}
+						availableModels={availableModels}
+						setAvailableModels={setAvailableModels}
+						selectedModel={selectedModel}
+						setSelectedModel={setSelectedModel}
+						handleDocumentsUpload={handleDocumentsUpload}
+						uploadedFiles={uploadedFiles}
+						setUploadedFiles={setUploadedFiles}
+					/>
 					<div className="flex flex-col flex-1 h-full">
-						<Card className="flex flex-col flex-1 h-full">
-							<CardHeader>
-								<CardTitle className="text-4xl font-bold bg-gradient-to-r from-blue-500 via-green-400 to-indigo-300 inline-block text-transparent bg-clip-text">
-									Context AI
-								</CardTitle>
-								<CardDescription>
-									Your AI-powered document assistant
-								</CardDescription>
-							</CardHeader>
-							<CardContent className="flex flex-col flex-1 overflow-y-auto">
-								<ChatHistory messages={messages} />
-								{isLoading && (
-									<div className="flex justify-start mt-4">
-										<div className="bg-gray-200 text-gray-800 p-3 rounded-lg max-w-[70%]">
-											<div className="flex space-x-1">
-												<div className="h-2 w-2 bg-gray-500 rounded-full animate-bounce [animation-delay:-0.3s]"></div>
-												<div className="h-2 w-2 bg-gray-500 rounded-full animate-bounce [animation-delay:-0.15s]"></div>
-												<div className="h-2 w-2 bg-gray-500 rounded-full animate-bounce"></div>
-											</div>
-										</div>
-									</div>
-								)}
-							</CardContent>
-							<div className="sticky bottom-0 z-10 m-4">
-								<QueryInput
-									onQuerySubmit={handleQuerySubmit}
-									onClearChat={handleClearChat}
-									disabled={
-										!apiKey ||
-										documents.length === 0 ||
-										isLoading
-									}
-									isChatHistoryEmpty={messages.length == 0}
-								/>
-							</div>
-						</Card>
+						<ChatWindow
+							messages={messages}
+							isLoading={isLoading}
+							handleQuerySubmit={handleQuerySubmit}
+							handleClearChat={handleClearChat}
+							apiKey={apiKey}
+							documents={documents}
+							isChatHistoryEmpty={messages.length == 0}
+						/>
 					</div>
 				</>
 			) : (
 				/* Mobile-only tabs */
 				<MobileTabs
 					settingsContent={
-						<div className="flex flex-col p-2 gap-2 mt-2">
-							<ApiKeyInput
-								onApiKeySubmit={setApiKey}
-								onModelsLoaded={setAvailableModels}
-							/>
-							{apiKey && availableModels.length > 0 && (
-								<ModelSelector
-									models={availableModels}
-									onSelectModel={setSelectedModel}
-									selectedModel={selectedModel}
-								/>
-							)}
-							<DocumentUpload
-								onDocumentsUpload={handleDocumentsUpload}
-								uploadedFiles={uploadedFiles}
-								setUploadedFiles={setUploadedFiles}
-							/>
-						</div>
+						<MobileSettingsContent
+							apiKey={apiKey}
+							setApiKey={setApiKey}
+							availableModels={availableModels}
+							setAvailableModels={setAvailableModels}
+							selectedModel={selectedModel}
+							setSelectedModel={setSelectedModel}
+							handleDocumentsUpload={handleDocumentsUpload}
+							uploadedFiles={uploadedFiles}
+							setUploadedFiles={setUploadedFiles}
+						/>
 					}
 					chatContent={
-						<div className="flex flex-col flex-1 h-full">
-							<div className="flex flex-col flex-1 h-full bg-background">
-								<div className="flex flex-col flex-1 overflow-y-auto px-4 py-5">
-									<ChatHistory messages={messages} />
-									{isLoading && (
-										<div className="flex justify-start mt-4">
-											<div className="bg-gray-200 text-gray-800 p-3 rounded-lg max-w-[70%]">
-												<div className="flex space-x-1">
-													<div className="h-2 w-2 bg-gray-500 rounded-full animate-bounce [animation-delay:-0.3s]"></div>
-													<div className="h-2 w-2 bg-gray-500 rounded-full animate-bounce [animation-delay:-0.15s]"></div>
-													<div className="h-2 w-2 bg-gray-500 rounded-full animate-bounce"></div>
-												</div>
-											</div>
-										</div>
-									)}
-								</div>
-							</div>
-						</div>
+						<MobileChatContent
+							messages={messages}
+							isLoading={isLoading}
+						/>
 					}
 					queryInput={
 						<QueryInput
