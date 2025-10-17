@@ -1,6 +1,18 @@
-# Context AI
+# Context AI 🤖
 
 **Context AI** is an intelligent document assistant built with [Next.js](https://nextjs.org) that leverages the power of the Google Gemini AI model. It enables users to effortlessly upload and interact with various document formats (PDF, TXT, Markdown, HTML), extracting key information and answering questions based _exclusively_ on the provided content.
+
+## 🖼️ Screenshots
+
+### Desktop View
+
+<img width="1593" height="930" alt="image" src="https://github.com/user-attachments/assets/4751c448-b956-4532-a137-13432cd29b8f" />
+
+<img width="1593" height="930" alt="image" src="https://github.com/user-attachments/assets/fd4aa6b2-f3ac-41aa-99da-3e1280cac760" />
+
+### Mobile View
+
+<img width="389" height="843" alt="image" src="https://github.com/user-attachments/assets/80bd45da-a97c-490a-9de2-95f311506f30" />
 
 ## 🌟 Features
 
