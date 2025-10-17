@@ -60,7 +60,7 @@ export default function RootLayout({
 				className={`${geistSans.variable} ${geistMono.variable} antialiased`}
 			>
 				<SettingsProvider>
-					<div className="flex justify-center h-screen">
+					<div className="flex justify-center h-screen md:bg-gray-100">
 						<main className="max-w-7xl w-full h-full">
 							{children}
 						</main>
