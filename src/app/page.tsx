@@ -29,19 +29,13 @@ export default function Home() {
 	>([
 		{
 			id: "1",
-			text: "Welcome to **Context AI**! 👋 I'm here to help you extract knowledge from your documents and answer any questions based on them. Let’s get started!",
+			text: "Welcome to **Context AI**! ✨\n\nI'm your intelligent document assistant. Upload a file, and I'll help you extract insights, summarize content, and answer your questions instantly. Let's turn your documents into dialogue! \n\n _— Created by [Nicholas](https://nlhq.vercel.app/)_",
 			sender: "ai",
 			timestamp: new Date().toLocaleTimeString(),
 		},
 		{
 			id: "2",
-			text: "1.Enter your Gemini API key. \n\n 2.Select a Gemini model. \n\n 3.Upload your document in HTML, PDF, or TXT format.",
-			sender: "ai",
-			timestamp: new Date().toLocaleTimeString(),
-		},
-		{
-			id: "3",
-			text: "Once done, feel free to ask me anything about the document!",
+			text: "Please configure the following in the **Settings** panel:\n1. Enter your Gemini API key.\n2. Select a Gemini model.\n3. Upload your document.\n4. Ask me anything about the document!",
 			sender: "ai",
 			timestamp: new Date().toLocaleTimeString(),
 		},

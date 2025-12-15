@@ -20,18 +20,16 @@ const ChatHistory: React.FC<ChatHistoryProps> = ({ messages }) => {
 			{messages.map((message) => (
 				<div
 					key={message.id}
-					className={`flex ${
-						message.sender === "user"
+					className={`flex ${message.sender === "user"
 							? "justify-end"
 							: "justify-start"
-					}`}
+						}`}
 				>
 					<div
-						className={`max-w-[90%] p-3 rounded-lg overflow-x-hidden ${
-							message.sender === "user"
+						className={`max-w-[90%] p-3 rounded-lg overflow-x-hidden ${message.sender === "user"
 								? "bg-gray-800 text-white"
 								: "bg-gray-100 text-gray-800"
-						}`}
+							}`}
 					>
 						{message.loading ? (
 							<div className="flex space-x-1">
@@ -41,13 +39,24 @@ const ChatHistory: React.FC<ChatHistoryProps> = ({ messages }) => {
 							</div>
 						) : (
 							<div
-								className={`prose break-words text-sm md:text-base ${
-									message.sender === "user"
+								className={`prose break-words text-sm md:text-base ${message.sender === "user"
 										? "text-white"
 										: ""
-								}`}
+									}`}
 							>
-								<ReactMarkdown remarkPlugins={[remarkGfm]}>
+								<ReactMarkdown
+									remarkPlugins={[remarkGfm]}
+									components={{
+										a: ({ node, ...props }) => (
+											<a
+												{...props}
+												target="_blank"
+												rel="noopener noreferrer"
+												className="text-blue-400 hover:underline"
+											/>
+										),
+									}}
+								>
 									{message.text}
 								</ReactMarkdown>
 							</div>
